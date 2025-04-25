@@ -119,7 +119,7 @@ const userAccounts = [
   },
 ]
 
-export default function Dashboard() {
+export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState("employees")
   const [searchTerm, setSearchTerm] = useState("")
 
