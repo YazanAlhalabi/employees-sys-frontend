@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react"
+import { FormEvent, useContext, useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -12,11 +12,20 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { EyeIcon, EyeOffIcon, LockIcon, UserIcon } from "lucide-react"
-import { useGetTodos } from "../features/todos"
+import { useLoginMutation } from "../features/auth"
+import { AuthContext } from "../context/auth-provider"
 
 export function LoginPage() {
+  const context = useContext(AuthContext)
+
+  if (!context) {
+    throw Error("Auth Context is required")
+  }
+
+  const { updateToken, token } = context
+  console.log("token:", token)
+  const loginMutation = useLoginMutation()
   const [showPassword, setShowPassword] = useState(false)
-  const query = useGetTodos()
 
   // Sign in form state
   const [signinData, setSigninData] = useState({
@@ -24,12 +33,13 @@ export function LoginPage() {
     password: "",
   })
 
-  console.log("query:", query)
-
-  const handleSigninSubmit = (e: FormEvent) => {
+  const handleSigninSubmit = async (e: FormEvent) => {
     e.preventDefault()
     // Here you would connect to your local authentication backend
     console.log("Sign in data:", signinData)
+    const res = await loginMutation.mutateAsync(signinData)
+    updateToken(res.data)
+    console.log("res:", res)
   }
 
   return (
