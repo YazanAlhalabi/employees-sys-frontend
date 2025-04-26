@@ -1,10 +1,8 @@
-"use client"
-
 import { FormEvent, useState } from "react"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-
 import {
   Card,
   CardContent,
@@ -14,15 +12,19 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { EyeIcon, EyeOffIcon, LockIcon, UserIcon } from "lucide-react"
+import { useGetTodos } from "../features/todos"
 
 export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
+  const query = useGetTodos()
 
   // Sign in form state
   const [signinData, setSigninData] = useState({
     username: "",
     password: "",
   })
+
+  console.log("query:", query)
 
   const handleSigninSubmit = (e: FormEvent) => {
     e.preventDefault()
