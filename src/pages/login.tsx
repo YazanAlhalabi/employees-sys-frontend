@@ -14,18 +14,22 @@ import {
 import { EyeIcon, EyeOffIcon, LockIcon, UserIcon } from "lucide-react"
 import { useLoginMutation } from "../features/auth"
 import { AuthContext } from "../context/auth-provider"
+import { LoginErrors, loginSchema } from "../schema/auth"
+import { useNavigate } from "react-router"
 
 export function LoginPage() {
   const context = useContext(AuthContext)
+  const navigate = useNavigate()
 
   if (!context) {
     throw Error("Auth Context is required")
   }
 
-  const { updateToken, token } = context
-  console.log("token:", token)
+  const { updateToken } = context
+
   const loginMutation = useLoginMutation()
   const [showPassword, setShowPassword] = useState(false)
+  const [errors, setErrors] = useState<null | LoginErrors>(null)
 
   // Sign in form state
   const [signinData, setSigninData] = useState({
@@ -35,11 +39,20 @@ export function LoginPage() {
 
   const handleSigninSubmit = async (e: FormEvent) => {
     e.preventDefault()
-    // Here you would connect to your local authentication backend
-    console.log("Sign in data:", signinData)
+
+    const validatedSchema = loginSchema.safeParse(signinData)
+    if (!validatedSchema.success) {
+      const errors = validatedSchema.error.flatten().fieldErrors
+      setErrors(errors)
+      return
+    }
+
     const res = await loginMutation.mutateAsync(signinData)
-    updateToken(res.data)
-    console.log("res:", res)
+    if (res.status === "success") {
+      updateToken(res.data)
+      setErrors(null)
+      navigate("/")
+    }
   }
 
   return (
@@ -73,6 +86,9 @@ export function LoginPage() {
                     }
                   />
                 </div>
+                {errors?.username && (
+                  <p className='text-red-400'>{errors.username.join(", ")}</p>
+                )}
               </div>
               <div className='space-y-2'>
                 <div className='flex items-center justify-between'>
@@ -114,6 +130,9 @@ export function LoginPage() {
                     )}
                   </button>
                 </div>
+                {errors?.password && (
+                  <p className='text-red-400'>{errors.password.join(", ")}</p>
+                )}
               </div>
             </CardContent>
             <CardFooter>
