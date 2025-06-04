@@ -1,9 +1,9 @@
+import { useContext } from "react"
 import { useMutation } from "@tanstack/react-query"
 
-import AuthService from "../api/auth"
-import { useContext } from "react"
-import { AuthContext } from "../context/auth-provider"
-import api from "../api"
+import AuthService from "@/api/auth"
+import { AuthContext } from "@/context/auth-provider"
+import api from "@/api"
 
 export function useLoginMutation() {
   const mutation = useMutation({

@@ -16,6 +16,18 @@ import { EmployeesContent } from "@/components/employees-content"
 import { DepartmentsContent } from "@/components/departments-content"
 import { UserAccountsContent } from "@/components/user-accounts-content"
 import { useFindAllEmployee } from "../features/employees"
+import { CreateEventForm } from "../components/create-employee-form"
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../components/ui/dialog"
+import { Label } from "../components/ui/label"
 
 // Mock data for departments
 const departments = [
@@ -122,10 +134,21 @@ export default function DashboardPage() {
                     ))}
                   </SelectContent>
                 </Select>
-                <Button>
-                  <PlusIcon className='mr-2 h-4 w-4' />
-                  Add New
-                </Button>
+
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant='outline'>
+                      <PlusIcon className='mr-2 h-4 w-4' />
+                      Add New
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className='sm:max-w-md'>
+                    <DialogHeader>
+                      <DialogTitle>Create new employee</DialogTitle>
+                    </DialogHeader>
+                    <CreateEventForm />
+                  </DialogContent>
+                </Dialog>
               </div>
             </div>
 
