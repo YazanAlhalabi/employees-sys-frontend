@@ -17,8 +17,9 @@ import {
 } from "@/components/ui/table"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
+import { Employee } from "../schema/employees"
 
-export function EmployeesContent({ employees }: any) {
+export function EmployeesContent({ employees }: { employees: Employee[] }) {
   console.log("employees:", employees)
   return (
     <Card>
@@ -47,11 +48,11 @@ export function EmployeesContent({ employees }: any) {
                   <div className='flex items-center gap-2'>
                     <Avatar className='h-8 w-8'>
                       <AvatarFallback className='bg-yellow-100 text-yellow-800'>
-                        {employee.first_name[0]}
-                        {employee.last_name[0]}
+                        {employee.firstName[0]}
+                        {employee.lastName[0]}
                       </AvatarFallback>
                     </Avatar>
-                    {employee.first_name} {employee.last_name}
+                    {employee.firstName} {employee.lastName}
                   </div>
                 </TableCell>
                 <TableCell>{employee.position}</TableCell>
@@ -60,12 +61,12 @@ export function EmployeesContent({ employees }: any) {
                     variant='outline'
                     className='bg-blue-50 text-blue-700 hover:bg-blue-50'
                   >
-                    {employee.department}
+                    Department
                   </Badge>
                 </TableCell>
                 <TableCell>{employee.email}</TableCell>
                 <TableCell>
-                  {new Date(employee.hire_date).toLocaleDateString()}
+                  {new Date(employee.hireDate).toLocaleDateString()}
                 </TableCell>
                 <TableCell>
                   <div className='flex items-center gap-2'>

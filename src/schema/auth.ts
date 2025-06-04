@@ -10,3 +10,12 @@ export type LoginCredentials = z.infer<typeof loginSchema>
 export type LoginErrors = {
   [K in keyof LoginCredentials]?: string[]
 }
+
+export const tokenSchema = z.object({
+  iat: z.number(),
+  exp: z.number(),
+  role: z.string(),
+  userId: z.string(),
+})
+
+export type Token = z.infer<typeof tokenSchema>
