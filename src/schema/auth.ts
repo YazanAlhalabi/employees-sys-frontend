@@ -19,3 +19,11 @@ export const tokenSchema = z.object({
 })
 
 export type Token = z.infer<typeof tokenSchema>
+
+export const signupSchema = z.object({
+  token: z.string({ message: "Account creation token is missing" }),
+  username: z.string().min(3, "Username must be at least 3 characters long"),
+  password: z.string().min(3, "Password must be at least 3 characters long"),
+})
+
+export type SignupDetails = z.infer<typeof signupSchema>

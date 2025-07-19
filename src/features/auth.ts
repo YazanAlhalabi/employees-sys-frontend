@@ -4,6 +4,7 @@ import { useMutation } from "@tanstack/react-query"
 import AuthService from "@/api/auth"
 import { AuthContext } from "@/context/auth-provider"
 import api from "@/api"
+import { SignupDetails } from "../schema/auth"
 
 export function useLoginMutation() {
   const mutation = useMutation({
@@ -15,6 +16,15 @@ export function useLoginMutation() {
       password: string
     }) => {
       return AuthService.login(username, password)
+    },
+  })
+  return mutation
+}
+
+export function useCreateAccount() {
+  const mutation = useMutation({
+    mutationFn: (signupDetails: SignupDetails) => {
+      return AuthService.signup(signupDetails)
     },
   })
   return mutation
