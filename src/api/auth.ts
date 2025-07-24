@@ -1,5 +1,5 @@
 import api from "."
-import { SignupDetails } from "../schema/auth"
+import { ResetDetails, SignupDetails } from "../schema/auth"
 
 export default {
   login: async (username: string, password: string) => {
@@ -12,6 +12,16 @@ export default {
       username: signupDetails.username,
       password: signupDetails.password,
     })
+
+    return res.data
+  },
+  forgotPassword: async (username: string) => {
+    const res = await api.post(`auth/forgot-password/${username}`)
+
+    return res.data
+  },
+  resetPassword: async (resetDetails: ResetDetails) => {
+    const res = await api.post("auth/reset-password", resetDetails)
 
     return res.data
   },

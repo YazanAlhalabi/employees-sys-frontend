@@ -27,3 +27,7 @@ export const signupSchema = z.object({
 })
 
 export type SignupDetails = z.infer<typeof signupSchema>
+export type ResetDetails = {
+  token: string
+  newPassword: string
+}

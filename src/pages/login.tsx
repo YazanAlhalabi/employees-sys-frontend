@@ -15,7 +15,7 @@ import { EyeIcon, EyeOffIcon, LockIcon, UserIcon } from "lucide-react"
 import { useLoginMutation } from "../features/auth"
 import { AuthContext } from "../context/auth-provider"
 import { LoginErrors, loginSchema } from "../schema/auth"
-import { useNavigate } from "react-router"
+import { Link, useNavigate } from "react-router"
 
 export function LoginPage() {
   const context = useContext(AuthContext)
@@ -93,15 +93,13 @@ export function LoginPage() {
               <div className='space-y-2'>
                 <div className='flex items-center justify-between'>
                   <Label htmlFor='signin-password'>Password</Label>
-                  <button
+                  <Link
+                    to='/reset-password'
                     type='button'
                     className='text-sm text-gray-500 hover:text-gray-700'
-                    onClick={() => {
-                      /* Implement password reset */
-                    }}
                   >
                     Forgot password?
-                  </button>
+                  </Link>
                 </div>
                 <div className='relative'>
                   <LockIcon className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500' />

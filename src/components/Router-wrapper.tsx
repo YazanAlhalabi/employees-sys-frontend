@@ -4,6 +4,7 @@ import { LoginPage } from "../pages/login"
 import { SignUpPage } from "../pages/signup"
 import DashboardPage from "../pages/dashboard"
 import ProtectedRoute from "./protected-route"
+import ForgotPassword from "../pages/forgot-password"
 
 export function RouterWrapper() {
   return (
@@ -14,6 +15,7 @@ export function RouterWrapper() {
         </Route>
         <Route path='login' element={<LoginPage />} />
         <Route path='signup' element={<SignUpPage />} />
+        <Route path='reset-password' element={<ForgotPassword />} />
       </Routes>
     </BrowserRouter>
   )
