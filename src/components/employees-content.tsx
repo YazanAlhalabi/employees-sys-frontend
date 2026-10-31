@@ -1,4 +1,4 @@
-import { PencilIcon, TrashIcon } from "lucide-react"
+import { PencilIcon, TrashIcon, Loader2Icon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -17,9 +17,18 @@ import {
 } from "@/components/ui/table"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
+import { Employee } from "@/schema/employee"
+import { useDeleteEmployeeMutation } from "@/feature/employee"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
+import { UpdateEventForm } from "./update-employee-form"
+import Department from "./department"
 
-export function EmployeesContent({ employees }: any) {
-  console.log("employees:", employees)
+export function EmployeesContent({ employees }: { employees: Employee[] }) {
+  // Destructure `mutate` and rename it, or use `deleteEmployee.mutate(id)`
+  const { mutate: deleteEmployee, variables: deletingId, isPending } = useDeleteEmployeeMutation()
+
+
+
   return (
     <Card>
       <CardHeader className='pb-2'>
@@ -41,46 +50,74 @@ export function EmployeesContent({ employees }: any) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {employees.map((employee) => (
-              <TableRow key={employee.id}>
-                <TableCell className='font-medium'>
-                  <div className='flex items-center gap-2'>
-                    <Avatar className='h-8 w-8'>
-                      <AvatarFallback className='bg-yellow-100 text-yellow-800'>
-                        {employee.first_name[0]}
-                        {employee.last_name[0]}
-                      </AvatarFallback>
-                    </Avatar>
-                    {employee.first_name} {employee.last_name}
-                  </div>
-                </TableCell>
-                <TableCell>{employee.position}</TableCell>
-                <TableCell>
-                  <Badge
-                    variant='outline'
-                    className='bg-blue-50 text-blue-700 hover:bg-blue-50'
-                  >
-                    {employee.department}
-                  </Badge>
-                </TableCell>
-                <TableCell>{employee.email}</TableCell>
-                <TableCell>
-                  {new Date(employee.hire_date).toLocaleDateString()}
-                </TableCell>
-                <TableCell>
-                  <div className='flex items-center gap-2'>
+            {employees.map((employee) => {
+              // Check if this specific row is currently being deleted
+              const isDeletingThis = isPending && deletingId === employee.id
+
+              return (
+                <TableRow key={employee.id}>
+                  <TableCell className='font-medium'>
+                    <div className='flex items-center gap-2'>
+                      <Avatar className='h-8 w-8'>
+                        <AvatarFallback className='bg-yellow-100 text-yellow-800'>
+                          {employee.firstName[0]}
+                          {employee.lastName[0]}
+                        </AvatarFallback>
+                      </Avatar>
+                      {employee.firstName} {employee.lastName}
+                    </div>
+                  </TableCell>
+                  <TableCell>{employee.position}</TableCell>
+                  <TableCell>
+                    <Badge
+                      variant='outline'
+                      className='bg-blue-50 text-blue-700 hover:bg-blue-50'
+                    >
+                      <Department id={employee.departmentId}/>
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{employee.email}</TableCell>
+                  <TableCell>
+                    {new Date(employee.hireDate).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    <div className='flex items-center gap-2'>
+                      <Dialog>
+                  <DialogTrigger asChild>
+                
                     <Button variant='ghost' size='icon' className='h-8 w-8'>
-                      <PencilIcon className='h-4 w-4' />
-                      <span className='sr-only'>Edit</span>
-                    </Button>
-                    <Button variant='ghost' size='icon' className='h-8 w-8'>
-                      <TrashIcon className='h-4 w-4' />
-                      <span className='sr-only'>Delete</span>
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
+                        <PencilIcon className='h-4 w-4' />
+                        <span className='sr-only'>Edit</span>
+                      </Button>
+                  </DialogTrigger>
+                  <DialogContent className='sm:max-w-md'>
+                    <DialogHeader>
+                      <DialogTitle>update employee</DialogTitle>
+                    </DialogHeader>
+                    <UpdateEventForm employee={employee}/>
+                  </DialogContent>
+                </Dialog>
+                      
+                      
+                      <Button 
+                        variant='ghost' 
+                        size='icon' 
+                        className='h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10'
+                        onClick={() => deleteEmployee(employee.id)}
+                        disabled={isPending}
+                      >
+                        {isDeletingThis ? (
+                          <Loader2Icon className='h-4 w-4 animate-spin' />
+                        ) : (
+                          <TrashIcon className='h-4 w-4' />
+                        )}
+                        <span className='sr-only'>Delete</span>
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )
+            })}
           </TableBody>
         </Table>
       </CardContent>

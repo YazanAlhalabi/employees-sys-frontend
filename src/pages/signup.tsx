@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react"
+import { FormEvent, useContext, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -12,19 +12,52 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { EyeIcon, EyeOffIcon, LockIcon, UserIcon } from "lucide-react"
+import { useNavigate, useSearchParams } from "react-router"
+import { useCreateAccount, useLoginMutation } from "../feature/auth"
+import { AuthContext } from "../context/auth-provider"
 
 export function SignUpPage() {
+  const context = useContext(AuthContext)
+  const navigate = useNavigate()
+
+  if (!context) {
+    throw Error("Auth Context is required")
+  }
+
   const [showPassword, setShowPassword] = useState(false)
+  const [searchParams] = useSearchParams()
+
+  const { updateToken } = context
+  const handleCreateAccount = useCreateAccount()
+  const loginMutation = useLoginMutation()
+
+  const token = searchParams.get("token") || ""
 
   const [signupData, setSignupData] = useState({
     username: "",
-    email: "",
     password: "",
     confirmPassword: "",
   })
 
-  const handleSignupSubmit = (e: FormEvent) => {
+  const handleSignupSubmit = async (e: FormEvent) => {
     e.preventDefault()
+    const signupDetails = {
+      token,
+      username: signupData.username,
+      password: signupData.password,
+    }
+    const res = await handleCreateAccount.mutateAsync(signupDetails)
+    console.log("res:", res)
+    console.log("res status:", res.status)
+    if (res.status === "success") {
+      const res = await loginMutation.mutateAsync({
+        username: signupData.username,
+        password: signupData.password,
+      })
+      updateToken(res.data)
+
+      navigate("/")
+    }
     console.log("Sign up data:", signupData)
   }
 
@@ -59,18 +92,6 @@ export function SignUpPage() {
                     }
                   />
                 </div>
-              </div>
-              <div className='space-y-2'>
-                <Label htmlFor='signup-email'>Email</Label>
-                <Input
-                  id='signup-email'
-                  type='email'
-                  placeholder='m@example.com'
-                  value={signupData.email}
-                  onChange={(e) =>
-                    setSignupData({ ...signupData, email: e.target.value })
-                  }
-                />
               </div>
               <div className='space-y-2'>
                 <Label htmlFor='signup-password'>Password</Label>

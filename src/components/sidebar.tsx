@@ -18,6 +18,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { LogoutButton } from "./LogoutButton"
 
 export function SideBar({
   setActiveTab,
@@ -73,6 +74,8 @@ export function SideBar({
             <SettingsIcon className='h-4 w-4' />
             Settings
           </Button>
+          <LogoutButton/>
+
         </nav>
       </div>
       <div className='border-t p-4'>

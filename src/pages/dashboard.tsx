@@ -9,66 +9,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { SideBar } from "@/components/sidebar"
 import { Header } from "@/components/header"
 import { EmployeesContent } from "@/components/employees-content"
 import { DepartmentsContent } from "@/components/departments-content"
 import { UserAccountsContent } from "@/components/user-accounts-content"
+import { useFindAllEmployee } from "@/feature/employee"
+import { CreateEventForm } from "@/components/create-employee-form"
+import { useFindAllDepartments, useFindDepartment } from "@/feature/department"
+import { LogoutButton } from "@/components/LogoutButton"
 
-// Mock data for employees
-const employees = [
-  {
-    id: "e1",
-    first_name: "John",
-    last_name: "Doe",
-    email: "john.doe@example.com",
-    phone_number: "555-123-4567",
-    hire_date: "2021-06-15",
-    position: "Software Engineer",
-    department: "Engineering",
-  },
-  {
-    id: "e2",
-    first_name: "Jane",
-    last_name: "Smith",
-    email: "jane.smith@example.com",
-    phone_number: "555-987-6543",
-    hire_date: "2020-03-10",
-    position: "Product Manager",
-    department: "Product",
-  },
-  {
-    id: "e3",
-    first_name: "Michael",
-    last_name: "Johnson",
-    email: "michael.j@example.com",
-    phone_number: "555-456-7890",
-    hire_date: "2022-01-05",
-    position: "UX Designer",
-    department: "Design",
-  },
-  {
-    id: "e4",
-    first_name: "Emily",
-    last_name: "Williams",
-    email: "emily.w@example.com",
-    phone_number: "555-789-0123",
-    hire_date: "2021-11-20",
-    position: "Marketing Specialist",
-    department: "Marketing",
-  },
-  {
-    id: "e5",
-    first_name: "David",
-    last_name: "Brown",
-    email: "david.b@example.com",
-    phone_number: "555-234-5678",
-    hire_date: "2019-08-12",
-    position: "HR Manager",
-    department: "Human Resources",
-  },
-]
+
 
 // Mock data for departments
 const departments = [
@@ -119,18 +81,22 @@ const userAccounts = [
   },
 ]
 
+
 export default function DashboardPage() {
+    const { data: departments } = useFindAllDepartments()
+  
   const [activeTab, setActiveTab] = useState("employees")
   const [searchTerm, setSearchTerm] = useState("")
+  const {data:employees} = useFindAllEmployee();
+
 
   // Filter employees based on search term
-  const filteredEmployees = employees.filter(
+  const filteredEmployees = employees?.data.content.filter(
     (employee) =>
-      employee.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      employee.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      employee.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      employee.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       employee.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      employee.position.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      employee.department.toLowerCase().includes(searchTerm.toLowerCase())
+      employee.position.toLowerCase().includes(searchTerm.toLowerCase()) 
   )
 
   return (
@@ -161,6 +127,7 @@ export default function DashboardPage() {
                   <LockIcon className='ml-2 h-4 w-4 text-red-500' />
                 </TabsTrigger>
               </TabsList>
+              {activeTab === "employees" &&
               <div className='flex items-center gap-2'>
                 <Select defaultValue='all'>
                   <SelectTrigger className='w-[180px]'>
@@ -175,15 +142,26 @@ export default function DashboardPage() {
                     ))}
                   </SelectContent>
                 </Select>
-                <Button>
-                  <PlusIcon className='mr-2 h-4 w-4' />
-                  Add New
-                </Button>
-              </div>
+               
+                  <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant='outline'>
+                      <PlusIcon className='mr-2 h-4 w-4' />
+                      Add New
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className='sm:max-w-md'>
+                    <DialogHeader>
+                      <DialogTitle>Create new employee</DialogTitle>
+                    </DialogHeader>
+                    <CreateEventForm />
+                  </DialogContent>
+                </Dialog>
+              </div>}
             </div>
 
             <TabsContent value='employees' className='border-none p-0 pt-4'>
-              <EmployeesContent employees={filteredEmployees} />
+              <EmployeesContent employees={filteredEmployees || []} />
             </TabsContent>
 
             <TabsContent value='departments' className='border-none p-0 pt-4'>
